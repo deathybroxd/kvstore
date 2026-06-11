@@ -210,6 +210,23 @@ private:
         InOrder(node->m_right);
 
     }
+
+    // overloaded rangequery, recursive
+    void RangeQuery(Node* node, K low, K high, std::vector<std::pair<K, V>>& result) {
+        if(node == m_nil) { // base case
+            return;
+        }
+
+        if(node->m_key > high) {
+            RangeQuery(node->m_left, low, high, result);
+        } else if (node->m_key > low){ // low
+            RangeQuery(node->m_right, low, high, result);
+        } else {
+            RangeQuery(node->m_left, low, high, result);
+            result.push_back({node->m_key, node->m_value});
+            RangeQuery(node->m_right, low, high, result);
+        }
+    }
 };
 
 // ===== implementations ===== //
@@ -285,10 +302,12 @@ V RBTree<K, V>::Search(K key) {
     return V{};
 }
 
-// rangequery
+// rangequery - return a vector of all 
 template <typename K, typename V>
 std::vector<std::pair<K, V>> RBTree<K, V>::RangeQuery(K low, K high) {
-
+    std::vector<std::pair<K, V>> result;
+    RangeQuery(m_root, low, high, result);
+    return result;
 }
 
 // return size
