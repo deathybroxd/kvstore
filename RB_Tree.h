@@ -9,6 +9,7 @@ in this file
 #include <vector>
 #include <string>
 #include <utility>
+#include <optional>
 
 // key, value
 template <typename K, typename V>
@@ -33,7 +34,7 @@ public:
     V Remove(K key);
 
     // search for node
-    V Search(K key);
+    std::optional<V> Search(K key);
 
     // returns a vector of all the stuff in the range
     std::vector<std::pair<K, V>> RangeQuery(K low, K high);
@@ -286,7 +287,7 @@ V RBTree<K, V>::Remove(K key) {
 
 // search
 template <typename K, typename V>
-V RBTree<K, V>::Search(K key) {
+std::optional<V> RBTree<K, V>::Search(K key) {
     Node* curr = m_root;
     while(curr != m_nil) {
         if(curr->m_key == key){
@@ -299,7 +300,7 @@ V RBTree<K, V>::Search(K key) {
             curr = curr->m_right;
         }
     }
-    return V{};
+    return std::nullopt;
 }
 
 // rangequery - return a vector of all 

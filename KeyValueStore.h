@@ -1,7 +1,6 @@
 #ifndef KEYVALUESTORE_H
 #define KEYVALUESTORE_H
 #include "RB_Tree.h"
-#include <optional>
 
 class KeyValueStore {
 public:
