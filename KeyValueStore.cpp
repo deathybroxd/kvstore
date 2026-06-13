@@ -25,7 +25,7 @@ std::optional<std::string> KeyValueStore::Get(std::string key) {
 
 // remove
 void KeyValueStore::Remove(std::string key) {
-
+    
 }
 
 // range query

@@ -31,7 +31,7 @@ public:
     void Insert(K key, V value);
 
     // remove node and return
-    V Remove(K key);
+    std::optional<V> Remove(K key);
 
     // search for node
     std::optional<V> Search(K key);
@@ -136,19 +136,37 @@ private:
         node->m_parent = child;
     }
 
-    // transplant a node
+    // transplant a node within a given subtree of two nodes
+    //  helper for remove
     void Transplant(Node* node1, Node* node2) {
+        if(node1 == m_root) {
+            m_root = node2;
+        } else if (node1->m_parent->m_left == node1) { // left child
+            node1->m_parent->m_left = node2;
+        } else { // right child
+            node1->m_parent->m_right = node2;
+        }
 
+        node2->m_parent = node1->m_parent;
     }
 
-    // find minimum
+    // find minimum, walks left, which in a rbtree is always the lesser side
+    // helper for remove
     Node* FindMin(Node* node) {
-
+        while(node->m_left != m_nil) {
+            node = node->m_left;
+        }
+        return node;
     }
 
-    // helper for clear and destructor
+    // helper for clear and destructor, recursive
     void DestroyTree(Node* node) {
-
+        if (node == m_nil) {
+            return;
+        }
+        DestroyTree(node->m_left);
+        DestroyTree(node->m_right);
+        delete node;
     }
 
     // insertFix - fixes red black inheritance with uncles and grandparents
@@ -196,8 +214,8 @@ private:
         m_root->m_color = BLACK;
     }
 
-    // deleteFix
-    void DeleteFixup(Node* node) {
+    // removeFix
+    void RemoveFixup(Node* node) {
 
     }
 
@@ -281,8 +299,53 @@ void RBTree<K, V>::Insert(K key, V value) {
 
 // remove
 template <typename K, typename V>
-V RBTree<K, V>::Remove(K key) {
+std::optional<V> RBTree<K, V>::Remove(K key) {
+    std::optional<V> value = Search(key);
+    if(value.has_value()) {
+        Node* curr = m_root;
+        while(curr != m_nil && curr->m_key != key) {
+            if(key < curr->m_key) {
+                curr = curr->m_left;
+            } else {
+                curr = curr->m_right;
+            }
+        }
 
+        Color ogColor = curr->m_color;
+        Node* replacement;
+
+        if(curr->m_left == m_nil) {
+            replacement = curr->m_right;
+            Transplant(curr, curr->m_right);
+        } else if (curr->m_right == m_nil) {
+            replacement = curr->m_left;
+            Transplant(curr, curr->m_left);
+        } else {
+            Node* successor = FindMin(curr->m_right);
+            ogColor = successor->m_color;
+            replacement = successor->m_right;
+            if(successor->m_parent == curr) {
+                replacement->m_parent = successor;
+            } else {
+                Transplant(successor, successor->m_right);
+                successor->m_right = curr->m_right;
+                successor->m_right->m_parent = successor;
+            }
+            Transplant(curr, successor);
+            successor->m_left = curr->m_left;
+            successor->m_left->m_parent = successor;
+            successor->m_color = curr->m_color;
+        }
+        delete curr;
+        // only for black because removing red nodes doesnt violate rbtree properties
+        if(ogColor == BLACK) {
+            RemoveFixup(replacement);
+        }
+        m_size--;
+        return value;
+    } else {
+        return std::nullopt;
+    }
 }
 
 // search
@@ -329,6 +392,9 @@ bool RBTree<K, V>::IsEmpty() {
 
 template <typename K, typename V>
 void RBTree<K, V>::Clear() {
+    DestroyTree(m_root); // recursrively destroys tree
+    m_root = m_nil;
+    m_size = 0;
 }
 
 template <typename K, typename V>
