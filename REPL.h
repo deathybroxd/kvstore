@@ -2,6 +2,9 @@
 #define REPL_H
 #include "KeyValueStore.h"
 
+// constants
+enum COMMAND {PUT, GET, REMOVE, RANGE, SIZE, CLEAR, HELP, QUIT};
+
 class REPL {
 public:
     // default constructor
@@ -16,7 +19,7 @@ private:
 
     // ===== PRIVATE FUNCTIONS =====
     
-    void Dispatch(std::string command);
+    void Dispatch(int commandInt);
 
     void PrintHelp();
 };

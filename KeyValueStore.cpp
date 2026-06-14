@@ -4,9 +4,7 @@
 KeyValueStore::KeyValueStore() {}
 
 // destructor (empty)
-KeyValueStore::~KeyValueStore() {
-
-}
+KeyValueStore::~KeyValueStore() {}
 
 // put
 void KeyValueStore::Put(std::string key, std::string value) {
@@ -25,7 +23,7 @@ std::optional<std::string> KeyValueStore::Get(std::string key) {
 
 // remove
 void KeyValueStore::Remove(std::string key) {
-    
+    m_tree.Remove(key);
 }
 
 // range query
