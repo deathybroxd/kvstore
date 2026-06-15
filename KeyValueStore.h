@@ -17,16 +17,19 @@ public:
     KeyValueStore& operator=(const KeyValueStore&) = delete;
 
     // put
-    void Put(std::string key, std::string value);
+    bool Put(std::string key, std::string value);
 
     // get 
     std::optional<std::string> Get(std::string key);
 
     // remove
-    void Remove(std::string key);
+    bool Remove(std::string key);
 
     // range query
     std::vector<std::pair<std::string, std::string>> RangeQuery(std::string low, std::string high);
+
+    // print tree
+    void Print();
 
     // get size
     int Size();
@@ -39,6 +42,7 @@ public:
 
 private:
     RBTree<std::string, std::string> m_tree;
+    std::vector<std::string> m_keys;
 };
 
 #endif

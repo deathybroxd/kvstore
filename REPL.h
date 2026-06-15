@@ -3,7 +3,7 @@
 #include "KeyValueStore.h"
 
 // constants
-enum COMMAND {PUT, GET, REMOVE, RANGE, SIZE, CLEAR, HELP, QUIT};
+enum COMMAND {PUT, GET, REMOVE, RANGE, SIZE, CLEAR, PRINT, HELP, QUIT};
 
 class REPL {
 public:

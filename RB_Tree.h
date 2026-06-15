@@ -225,7 +225,7 @@ private:
             return;
         }
         InOrder(node->m_left);
-        std::cout << node->m_key << ": " << node->m_value << std::endl;
+        std::cout << node->m_key << " : " << node->m_value << std::endl;
         InOrder(node->m_right);
 
     }
@@ -238,7 +238,7 @@ private:
 
         if(node->m_key > high) {
             RangeQuery(node->m_left, low, high, result);
-        } else if (node->m_key > low){ // low
+        } else if (node->m_key < low){ // low
             RangeQuery(node->m_right, low, high, result);
         } else {
             RangeQuery(node->m_left, low, high, result);
@@ -248,7 +248,7 @@ private:
     }
 };
 
-// ===== implementations ===== //
+// ===== public implementations ===== //
 
 // default constructor
 template <typename K, typename V>
@@ -262,6 +262,7 @@ RBTree<K, V>::RBTree() {
 template <typename K, typename V>
 RBTree<K, V>::~RBTree() {
     Clear();
+    delete m_nil; // this delete only runs when the program is done
 }
 
 // insert
